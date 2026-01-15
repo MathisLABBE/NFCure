@@ -37,13 +37,15 @@ namespace NFCure
         {
             var msg = MessageEntry.Text?.Trim();
 
+            var encryptedmessage = ProgramRSA.EncryptString(msg ?? "");
+
             if (string.IsNullOrWhiteSpace(msg))
             {
                 SendStatusLabel.Text = "⚠️ Écris un message d'abord";
                 return;
             }
 
-            SetMessageToSend(msg);
+            SetMessageToSend(encryptedmessage);
             SendStatusLabel.Text = "✅ Message prêt à être envoyé en NFC : " + msg;
         }
     }

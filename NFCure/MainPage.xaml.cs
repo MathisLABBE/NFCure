@@ -1,4 +1,5 @@
 ﻿using Microsoft.Maui;
+using System.Text;
 
 namespace NFCure
 {
@@ -35,9 +36,8 @@ namespace NFCure
 
         private void OnSetMessageClicked(object sender, EventArgs e)
         {
+            var rsa = new ProgramRSA();
             var msg = MessageEntry.Text?.Trim();
-
-            var encryptedmessage = ProgramRSA.EncryptString(msg ?? "");
 
             if (string.IsNullOrWhiteSpace(msg))
             {
@@ -45,7 +45,11 @@ namespace NFCure
                 return;
             }
 
-            SetMessageToSend(encryptedmessage);
+            List<long> encryptedmessage = rsa.EncryptString(msg ?? "");
+            
+            string encryptedmsgstring = string.Join(",", encryptedmessage);
+
+            SetMessageToSend(encryptedmsgstring);
             SendStatusLabel.Text = "✅ Message prêt à être envoyé en NFC : " + msg;
         }
     }

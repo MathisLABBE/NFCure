@@ -123,7 +123,7 @@ public class rsa
     public long[] ClePublic(long p, long q, long e)
     {
         long n = p * q;
-        return new long[] { n, e };
+        return new long[]{ n, e };
     }
 
     public long[] ClePrivee(long p, long q, long e)

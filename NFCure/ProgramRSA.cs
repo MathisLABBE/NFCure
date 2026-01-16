@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Numerics;
 using System.Text;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace NFCure
 {
-    class ProgramRSA
+    public class ProgramRSA
     {
         // --- Génération des clés ---
         public long p = 61;
@@ -25,25 +22,25 @@ namespace NFCure
             d = ModInverse(e, phi);
         }
 
-        // --- Chiffrement ---
-        public List<long> Encrypt(byte[] data)
+        // --- Chiffrement avec clé publique ---
+        public List<long> Encrypt(byte[] data, long[] clepublique)
         {
             List<long> encrypted = new List<long>();
             foreach (byte b in data)
             {
-                long c = ModPow(b, e, n);
+                long c = ModPow(b, clepublique[1], clepublique[0]);
                 encrypted.Add(c);
             }
             return encrypted;
         }
 
-        // --- Déchiffrement ---
-        public byte[] Decrypt(List<long> encrypted)
+        // --- Déchiffrement avec clé privée ---
+        public byte[] Decrypt(List<long> encrypted, long[] cleprivee)
         {
             List<byte> decrypted = new List<byte>();
             foreach (long c in encrypted)
             {
-                long m = ModPow(c, d, n);
+                long m = ModPow(c, cleprivee[1], cleprivee[0]);
                 decrypted.Add((byte)m);
             }
             return decrypted.ToArray();
@@ -84,46 +81,43 @@ namespace NFCure
             return x1;
         }
 
-        static void Main()
-        {
-            ProgramRSA rsa = new ProgramRSA();
-
-            // --- Lire fichier texte ---
-            byte[] data = File.ReadAllBytes("C:\\Users\\matgr\\OneDrive\\01_Doc\\01_Cours\\02_Univ\\S3\\12_Crypto\\Exo 2 - RSA\\RSACs\\RSACs\\test.txt");
-
-            // --- Chiffrement ---
-            List<long> encrypted = rsa.Encrypt(data);
-
-            // --- Écriture fichier chiffré ---
-            using (var writer = new BinaryWriter(File.Open("fichier_chiffre.bin", FileMode.Create)))
-            {
-                foreach (long c in encrypted)
-                    writer.Write(c);
-            }
-
-            // --- Lecture fichier chiffré ---
-            List<long> encryptedRead = new List<long>();
-            using (var reader = new BinaryReader(File.Open("fichier_chiffre.bin", FileMode.Open)))
-            {
-                while (reader.BaseStream.Position != reader.BaseStream.Length)
-                {
-                    encryptedRead.Add(reader.ReadInt64());
-                }
-            }
-
-            // --- Déchiffrement ---
-            byte[] decrypted = rsa.Decrypt(encryptedRead);
-
-            // --- Écriture fichier déchiffré ---
-            File.WriteAllBytes("fichier_dechiffre.txt", decrypted);
-
-            Console.WriteLine("Chiffrement et déchiffrement terminés !");
-        }
-
-        public List<long> EncryptString(string text)
+        // --- Chiffrer un string avec clé publique ---
+        public List<long> EncryptString(string text, long[] clepublique)
         {
             byte[] bytes = Encoding.UTF8.GetBytes(text);
-            return Encrypt(bytes);
+            return Encrypt(bytes, clepublique);
+        }
+
+        // --- Déchiffrer un string à partir d'une liste de valeurs ---
+        public string DecryptString(string encryptedText, long[] cleprivee)
+        {
+            if (string.IsNullOrWhiteSpace(encryptedText))
+                return "";
+
+            try
+            {
+                // Convertir le string en liste de long
+                var encryptedValues = encryptedText.Split(',');
+                var longValues = new List<long>();
+                
+                foreach (var val in encryptedValues)
+                {
+                    if (long.TryParse(val.Trim(), out long num))
+                    {
+                        longValues.Add(num);
+                    }
+                }
+
+                // Déchiffrer
+                byte[] decryptedBytes = Decrypt(longValues, cleprivee);
+
+                // Convertir en string
+                return Encoding.UTF8.GetString(decryptedBytes);
+            }
+            catch
+            {
+                return "❌ Erreur déchiffrement";
+            }
         }
     }
 }

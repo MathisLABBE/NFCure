@@ -7,6 +7,8 @@ namespace NFCure
     {
         int count = 0;
 
+        string NdefText = "";
+
 
 
         public MainPage()
@@ -27,18 +29,19 @@ namespace NFCure
                 {
                     LabelUID.Text = string.IsNullOrEmpty(uid) ? "(UID vide)" : uid;
                     LabelNDEF.Text = string.IsNullOrEmpty(ndefText) ? "(Pas de texte NDEF)" : ndefText;
+                    NdefText = ndefText;
                 });
 
                 RfidToolsGetter.SetOffTagRead();
             });
 
-            if (string.IsNullOrWhiteSpace(clepubliquepourcrypter))
+            if (string.IsNullOrWhiteSpace(NdefText))
             {
                 SendStatusLabel.Text = "⚠️ Clé publique manquante";
                 return;
             }
 
-            var parts = clepubliquepourcrypter.Split(',');
+            var parts = NdefText.Split(',');
             if (parts.Length != 2)
             {
                 SendStatusLabel.Text = "⚠️ Clé publique invalide";

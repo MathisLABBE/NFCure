@@ -40,6 +40,19 @@
             <Entry x:Name="MessageEntry" Placeholder="Message à envoyer via NFC" />
             <Button Text="Mettre le message à envoyer" Clicked="OnSetMessageClicked"/>
             <Label x:Name="SendStatusLabel" Text="Status..." />
+
+            <Button
+    x:Name="ProcessusEnvoyer"
+    Text="Envoyer" 
+    SemanticProperties.Hint="Counts the number of times you click"
+    Clicked="ProcedureEnvoyeur"
+    HorizontalOptions="Fill" />
+            <Button
+x:Name="ProcessusRecepteur"
+Text="Recevoir" 
+SemanticProperties.Hint="Counts the number of times you click"
+Clicked="ProcedureRecepteur"
+HorizontalOptions="Fill" />
         </VerticalStackLayout>
     </ScrollView>
 

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NFCure.EnvoyerPage"
+             Title="EnvoyerPage">
+    <VerticalStackLayout>
+        <Label 
+            Text="Pour envoyer un message il vous faut :"
+            VerticalOptions="Center" 
+            HorizontalOptions="Center" />
+
+        <Label 
+            Text="* La clé publique du destinataire (pour la récupéré, demander au destinataire de vous la donner, elle se trouve dans la page Recevoir)"
+            VerticalOptions="Center" 
+            HorizontalOptions="Start"
+            Margin="30, 10, 30, 0"/>
+
+        <Label 
+            Text="* Le message que vous désirer envoyer"
+            VerticalOptions="Center" 
+            HorizontalOptions="Start"
+            Margin="30, 10, 30, 0"/>
+
+        <!-- Clé publique -->
+        <!-- n -->
+        <Label 
+            Text="Clé publique ( n )"
+            VerticalOptions="Center" 
+            HorizontalOptions="Start"
+            Margin="30, 50, 30, 0"/>
+
+        <Entry
+            x:Name="ClePubliqueN"
+            Placeholder="Entrez la valeur 'n' de la clé publique"
+            Margin="30, 0, 30, 0"/>
+
+        <!-- n -->
+        <Label 
+            Text="Clé publique ( e )"
+            VerticalOptions="Center" 
+            HorizontalOptions="Start"
+            Margin="30, 50, 30, 0"/>
+
+        <Entry
+            x:Name="ClePubliqueE"
+            Placeholder="Entrez la valeur 'e' de la clé publique"
+            Margin="30, 0, 30, 0"/>
+
+        <!-- Message -->
+        <Label 
+            Text="Message"
+            VerticalOptions="Center" 
+            HorizontalOptions="Start"
+            Margin="30, 50, 30, 0"/>
+
+        <Entry
+            x:Name="Message"
+            Placeholder="Entrez le message à envoyer"
+            Margin="30, 0, 30, 0"/>
+
+        <!-- Envoyer -->
+        <Button
+            x:Name="BtnEnvoyer"
+            Text="Envoyer" 
+            Clicked="BtnEnvoyer_Click"
+            HorizontalOptions="Fill"
+            Margin="30"/>
+    </VerticalStackLayout>
+</ContentPage>

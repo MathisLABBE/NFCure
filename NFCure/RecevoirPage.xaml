@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NFCure.RecevoirPage"
+             Title="RecevoirPage">
+    <VerticalStackLayout>
+        <Label 
+            Text="Pour recevoir un message il faut :"
+            VerticalOptions="Center" 
+            HorizontalOptions="Center" />
+
+        <Label 
+            Text="* Donner votre clé publique à l'envoyeur"
+            VerticalOptions="Center" 
+            HorizontalOptions="Start"
+            Margin="30, 10, 30, 10"/>
+
+        <Label 
+            Text="Votre clé publique :"
+            VerticalOptions="Center" 
+            HorizontalOptions="Start"
+            Margin="30, 30, 30, 10"/>
+
+        <Label 
+            Text="{Binding N, StringFormat='Valeur N = {0}'}"
+            VerticalOptions="Center" 
+            HorizontalOptions="Start"
+            Margin="30, 0, 30, 10"/>
+
+        <Label 
+            Text="{Binding E, StringFormat='Valeur E = {0}'}"
+            VerticalOptions="Center" 
+            HorizontalOptions="Start"
+            Margin="30, 0, 30, 10"/>
+
+        <!-- Recevoir -->
+        <Button
+            x:Name="BtnRecevoir"
+            Text="Recevoir" 
+            Clicked="BtnRecevoir_Click"
+            HorizontalOptions="Fill"
+            Margin="30"/>
+
+        <Label 
+            x:Name="MessageRecu"
+            VerticalOptions="Center" 
+            HorizontalOptions="Start"
+            Margin="30, 0, 30, 10"
+            IsVisible="Collapse"/>
+    </VerticalStackLayout>
+</ContentPage>

@@ -141,5 +141,15 @@ namespace NFCure
             SetMessageToSend(encryptedmsgstring);
             SendStatusLabel.Text = "✅ Message prêt à être envoyé en NFC : " + msg;
         }
+
+        private async void BtnPageEnvoyer_Click(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync(nameof(EnvoyerPage));
+        }
+
+        private async void BtnPageRecevoir_Click(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync(nameof(RecevoirPage));
+        }
     }
 }

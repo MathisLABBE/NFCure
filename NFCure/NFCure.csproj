@@ -72,4 +72,13 @@
 	  </AndroidResource>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <MauiXaml Update="EnvoyerPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="RecevoirPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+
 </Project>

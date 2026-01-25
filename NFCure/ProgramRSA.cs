@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -16,6 +16,16 @@ namespace NFCure
 
         public ProgramRSA()
         {
+            n = p * q;
+            phi = (p - 1) * (q - 1);
+            e = 17;  // premier avec phi
+            d = ModInverse(e, phi);
+        }
+
+        public ProgramRSA(long p, long q)
+        {
+            this.p = p;
+            this.q = q;
             n = p * q;
             phi = (p - 1) * (q - 1);
             e = 17;  // premier avec phi

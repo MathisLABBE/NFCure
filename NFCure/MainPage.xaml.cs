@@ -1,5 +1,6 @@
-﻿using Microsoft.Maui;
+using Microsoft.Maui;
 using System.Text;
+using Cs;
 
 namespace NFCure
 {
@@ -8,6 +9,7 @@ namespace NFCure
         int count = 0;
 
         string NdefText = "";
+        private ProgramRSA _myRsa;
 
 
 
@@ -15,41 +17,44 @@ namespace NFCure
         {
             InitializeComponent();
 
-            
+            InitializeRSAKeys();
+        }
+
+        private void InitializeRSAKeys()
+        {
+            var rsaGenerator = new rsa();
+            long p = rsaGenerator.PremierAleatoire(50, 100);
+            long q = rsaGenerator.PremierAleatoire(50, 100);
+
+            _myRsa = new ProgramRSA(p, q);
+
+            PublicKeyLabel.Text = $"Clé publique (n, e) : {_myRsa.n}, {_myRsa.e}";
         }
 
 
         private void ProcedureEnvoyeur(object? sender, EventArgs args)
         {
-            var rsa = new ProgramRSA();
-
-            RfidToolsGetter.SetOnTagRead((uid, ndefText) =>
-            {
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    LabelUID.Text = string.IsNullOrEmpty(uid) ? "(UID vide)" : uid;
-                    LabelNDEF.Text = string.IsNullOrEmpty(ndefText) ? "(Pas de texte NDEF)" : ndefText;
-                    NdefText = ndefText;
-                });
-
-                RfidToolsGetter.SetOffTagRead();
-            });
-
-            if (string.IsNullOrWhiteSpace(NdefText))
+            // Récupérer la clé publique depuis le TextField
+            var publicKeyText = PublicKeyEntry.Text?.Trim();
+            
+            if (string.IsNullOrWhiteSpace(publicKeyText))
             {
                 SendStatusLabel.Text = "⚠️ Clé publique manquante";
                 return;
             }
 
-            var parts = NdefText.Split(',');
+            var parts = publicKeyText.Split(',');
             if (parts.Length != 2)
             {
-                SendStatusLabel.Text = "⚠️ Clé publique invalide";
+                SendStatusLabel.Text = "⚠️ Clé publique invalide (format: n,e)";
                 return;
             }
 
-            long n = long.Parse(parts[0]);
-            long e = long.Parse(parts[1]);
+            if (!long.TryParse(parts[0].Trim(), out long n) || !long.TryParse(parts[1].Trim(), out long e))
+            {
+                SendStatusLabel.Text = "⚠️ Clé publique invalide (valeurs non numériques)";
+                return;
+            }
 
             var msg = MessageEntry.Text?.Trim();
             if (string.IsNullOrWhiteSpace(msg))
@@ -58,9 +63,11 @@ namespace NFCure
                 return;
             }
 
-            List<long> encryptedMessage = rsa.EncryptString(msg, new long[] { n, e });
+            // Chiffrer le message avec la clé publique du destinataire
+            List<long> encryptedMessage = _myRsa.EncryptString(msg, new long[] { n, e });
             string encryptedMsgString = string.Join(",", encryptedMessage);
 
+            // Préparer l'envoi via NFC
             SetMessageToSend(encryptedMsgString);
 
             SendStatusLabel.Text = "✅ Message chiffré prêt à être envoyé en NFC";
@@ -70,12 +77,6 @@ namespace NFCure
 
         private void ProcedureRecepteur(object? sender, EventArgs args)
         {
-            var rsa = new ProgramRSA();
-
-            // Envoyer la clé publique
-            var clepubliqueaenvoyer = rsa.n + "," + rsa.e;
-            SetMessageToSend(clepubliqueaenvoyer);
-
             // Configurer la lecture NFC et déchiffrer le message reçu
             RfidToolsGetter.SetOnTagRead((uid, ndefText) =>
             {
@@ -90,8 +91,8 @@ namespace NFCure
                     }
 
                     // Déchiffrer le message reçu
-                    long[] clePrivee = new long[] { rsa.n, rsa.d };
-                    string decryptedMessage = rsa.DecryptString(ndefText, clePrivee);
+                    long[] clePrivee = new long[] { _myRsa.n, _myRsa.d };
+                    string decryptedMessage = _myRsa.DecryptString(ndefText, clePrivee);
                     LabelNDEF.Text = decryptedMessage;
                     SendStatusLabel.Text = "✅ Message reçu et déchiffré";
                 });
@@ -124,7 +125,6 @@ namespace NFCure
 
         private void OnSetMessageClicked(object sender, EventArgs e)
         {
-            var rsa = new ProgramRSA();
             var msg = MessageEntry.Text?.Trim();
 
             if (string.IsNullOrWhiteSpace(msg))
@@ -133,8 +133,8 @@ namespace NFCure
                 return;
             }
 
-            long[] clePublique = new long[] { rsa.n, rsa.e };
-            List<long> encryptedmessage = rsa.EncryptString(msg ?? "", clePublique);
+            long[] clePublique = new long[] { _myRsa.n, _myRsa.e };
+            List<long> encryptedmessage = _myRsa.EncryptString(msg ?? "", clePublique);
             
             string encryptedmsgstring = string.Join(",", encryptedmessage);
 

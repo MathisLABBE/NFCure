@@ -1,7 +1,3 @@
-using Microsoft.Maui;
-using System.Text;
-using Cs;
-
 namespace NFCure
 {
     public partial class MainPage : ContentPage
@@ -9,7 +5,7 @@ namespace NFCure
         int count = 0;
 
         string NdefText = "";
-        private ProgramRSA _myRsa;
+        public ProgramRSA _myRsa;
 
 
 
@@ -17,21 +13,10 @@ namespace NFCure
         {
             InitializeComponent();
 
-            InitializeRSAKeys();
+            _myRsa = new ProgramRSA();
         }
 
-        private void InitializeRSAKeys()
-        {
-            var rsaGenerator = new rsa();
-            long p = rsaGenerator.PremierAleatoire(50, 100);
-            long q = rsaGenerator.PremierAleatoire(50, 100);
-
-            _myRsa = new ProgramRSA(p, q);
-
-            PublicKeyLabel.Text = $"Clé publique (n, e) : {_myRsa.n}, {_myRsa.e}";
-        }
-
-
+        /*
         private void ProcedureEnvoyeur(object? sender, EventArgs args)
         {
             // Récupérer la clé publique depuis le TextField
@@ -72,6 +57,7 @@ namespace NFCure
 
             SendStatusLabel.Text = "✅ Message chiffré prêt à être envoyé en NFC";
         }
+        */
 
 
 
@@ -144,12 +130,14 @@ namespace NFCure
 
         private async void BtnPageEnvoyer_Click(object sender, EventArgs e)
         {
-            await Shell.Current.GoToAsync(nameof(EnvoyerPage));
+            //await Shell.Current.GoToAsync(nameof(EnvoyerPage));
+            await Navigation.PushAsync(new EnvoyerPage());
         }
 
         private async void BtnPageRecevoir_Click(object sender, EventArgs e)
         {
-            await Shell.Current.GoToAsync(nameof(RecevoirPage));
+            //await Shell.Current.GoToAsync(nameof(RecevoirPage));
+            await Navigation.PushAsync(new RecevoirPage(_myRsa));
         }
     }
 }

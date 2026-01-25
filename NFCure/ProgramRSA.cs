@@ -1,5 +1,4 @@
-using System;
-using System.Collections.Generic;
+using Cs;
 using System.Text;
 
 namespace NFCure
@@ -7,18 +6,24 @@ namespace NFCure
     public class ProgramRSA
     {
         // --- Génération des clés ---
-        public long p = 61;
-        public long q = 53;
+        public long p;
+        public long q;
         public long n;
         public long phi;
         public long e;
         public long d;
 
+        public rsa Rsa;
+
         public ProgramRSA()
         {
+            Rsa = new rsa();
+            var cle = Rsa.ChoixCle(50, 100);
+            p = cle[0];
+            q = cle[1];
             n = p * q;
             phi = (p - 1) * (q - 1);
-            e = 17;  // premier avec phi
+            e = cle[2];  // premier avec phi
             d = ModInverse(e, phi);
         }
 

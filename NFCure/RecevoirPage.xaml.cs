@@ -1,16 +1,23 @@
+using Cs;
+
 namespace NFCure;
 
 public partial class RecevoirPage : ContentPage
 {
+    public ProgramRSA RSA;
 	public string? N { get; set; }
     public string? E { get; set; }
 
-    public RecevoirPage()
-	{
-        N = "N" ?? null;
-        E = "E" ?? null;
+    public long D { get; set; }
 
-		InitializeComponent();
+    public RecevoirPage(ProgramRSA pRSA)
+	{
+        RSA = pRSA;
+        N = pRSA.n.ToString() ?? null;
+        E = pRSA.e.ToString() ?? null;
+        D = pRSA.d;
+
+        InitializeComponent();
 
 		BindingContext = this;
 	}
@@ -31,11 +38,33 @@ public partial class RecevoirPage : ContentPage
         BtnRecevoir.Text = "Le message est prêt à être reçus";
 
         // Procedure receveur
+        ProcedureRecepteur();
 
         BtnRecevoir.IsEnabled = true;
-        BtnRecevoir.Text = "Recevoir";
 
-        MessageRecu.Text = "Text du message recu";
         MessageRecu.IsVisible = true;
+    }
+
+    private void ProcedureRecepteur()
+    {
+        // Configurer la lecture NFC et déchiffrer le message reçu
+        RfidToolsGetter.SetOnTagRead((uid, ndefText) =>
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                if (string.IsNullOrWhiteSpace(ndefText))
+                {
+                    return;
+                }
+
+                // Déchiffrer le message reçu
+                long[] clePrivee = new long[] { long.Parse(N), D };
+                string decryptedMessage = RSA.DecryptString(ndefText, clePrivee);
+                MessageRecu.Text = decryptedMessage;
+                BtnRecevoir.Text = "Message reçu et déchiffré";
+            });
+
+            RfidToolsGetter.SetOffTagRead();
+        });
     }
 }

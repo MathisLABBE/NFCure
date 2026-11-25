@@ -1,4 +1,4 @@
-namespace NFCure;
+ï»¿namespace NFCure;
 
 public partial class EnvoyerPage : ContentPage
 {
@@ -21,23 +21,23 @@ public partial class EnvoyerPage : ContentPage
 
 		if (string.IsNullOrWhiteSpace(CleN))
 		{
-			BtnEnvoyer.Text = "Veuillez entrer une clé N valide";
+			BtnEnvoyer.Text = "Veuillez entrer une clÃ© N valide";
 			return;
         }
 		if (string.IsNullOrWhiteSpace(CleE))
 		{
-			BtnEnvoyer.Text = "Veuillez entrer une clé E valide";
+			BtnEnvoyer.Text = "Veuillez entrer une clÃ© E valide";
 			return;
 		}
         if (!long.TryParse(CleN, out long CleNLong))
         {
-            BtnEnvoyer.Text = "Clé N invalide (nombre attendu)";
+            BtnEnvoyer.Text = "ClÃ© N invalide (nombre attendu)";
             return;
         }
 
         if (!long.TryParse(CleE, out long CleELong))
         {
-            BtnEnvoyer.Text = "Clé E invalide (nombre attendu)";
+            BtnEnvoyer.Text = "ClÃ© E invalide (nombre attendu)";
             return;
         }
         if (string.IsNullOrWhiteSpace(Msg))
@@ -49,7 +49,7 @@ public partial class EnvoyerPage : ContentPage
 		ClePubliqueE.IsEnabled = false;
 		Message.IsEnabled = false;
 		BtnEnvoyer.IsEnabled = false;
-		BtnEnvoyer.Text = "Le message est prêt à être envoyer";
+		BtnEnvoyer.Text = "Le message est prÃªt Ã  Ãªtre envoyer";
 
 		// Procedure d'envoie
 		ProcedureEnvoyeur(CleNLong, CleELong);
@@ -63,11 +63,11 @@ public partial class EnvoyerPage : ContentPage
     private void ProcedureEnvoyeur(long n, long e)
     {
 		ProgramRSA Rsa = new ProgramRSA();
-        // Chiffrer le message avec la clé publique du destinataire
+        // Chiffrer le message avec la clÃ© publique du destinataire
         List<long> encryptedMessage = Rsa.EncryptString(Msg, new long[] { n, e });
         string encryptedMsgString = string.Join(",", encryptedMessage);
 
-        // Préparer l'envoi via NFC
+        // PrÃ©parer l'envoi via NFC
         SetMessageToSend(encryptedMsgString);
     }
 
